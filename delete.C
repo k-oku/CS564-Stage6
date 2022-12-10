@@ -2,12 +2,18 @@
 #include "query.h"
 
 
-/*
- * Deletes records from a specified relation.
+ /* Deletes records from a specified relation.
  *
  * Returns:
  * 	OK on success
  * 	an error code otherwise
+ * 
+ * 
+ * @param relation - table name 
+ * @param attrName - column (attribute name)
+ * @param op - operator
+ * @param type - datatype
+ * @param attrValue - char* to attrValue
  */
 
 const Status QU_Delete(const string & relation, 
@@ -40,20 +46,23 @@ const Status QU_Delete(const string & relation,
 	//if attrName is NULL
 	if(attrName.length() == 0) {
 		//delete all rows in relation
+
+		//start scan
 		status = relScan.startScan(0,0, STRING, NULL, EQ);
 		if (status != OK) {
 			return status;
 		}
-
+		//keep scanning next
 		while(relScan.scanNext(rRID) == OK) {
 			status = relScan.deleteRecord();
 			if (status != OK) {
 				return status;
 			}
 			tupCnt++;
-			printf("deleted %d tuples \n", tupCnt);
-			return OK;
 		}
+
+		printf("deleted %d tuples \n", tupCnt);
+		return OK;
 	}
 
 	AttrDesc attrDesc;
@@ -97,7 +106,7 @@ const Status QU_Delete(const string & relation,
 		tupCnt++;
 	}
 
-	printf("deleted %d tuplesz \n", tupCnt);
+	printf("deleted %d tuples \n", tupCnt);
 	
 	//if tuples deleted w no issues
 	return OK;
