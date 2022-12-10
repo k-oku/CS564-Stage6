@@ -72,11 +72,17 @@ const Status QU_Select(const string & result,
 		}
 		return OK;
 	} else if (attr->attrType == INTEGER) {
+		status = attrCat->getInfo(string(attr->relName), string(attr->attrName), attrDesc);
+		if (status != OK) {return status;}
 		int tmp = atoi(attrValue);
 		filter = (char*)&tmp;
 	} else if (attr->attrType == STRING) {
+		status = attrCat->getInfo(string(attr->relName), string(attr->attrName), attrDesc);
+		if (status != OK) {return status;}
 		filter = attrValue; // string already
 	} else if (attr->attrType == FLOAT) {
+		status = attrCat->getInfo(string(attr->relName), string(attr->attrName), attrDesc);
+		if (status != OK) {return status;}
 		float tmp = atof(attrValue);
 		filter = (char*)&tmp;
 	}
@@ -115,9 +121,9 @@ const Status ScanSelect(const string & result,
 		return status;
 	}
 	char outputData[reclen];
-    	Record outputRec; // for output
-    	outputRec.data = (void *) outputData;
-    	outputRec.length = reclen;
+    Record outputRec; // for output
+    outputRec.data = (void *) outputData;
+    outputRec.length = reclen;
 	// set up, scan outer
 	HeapFileScan outerScan(string(attrDesc->relName), status);
 	if (status != OK) {
@@ -132,13 +138,13 @@ const Status ScanSelect(const string & result,
 	// scanning outer table
 	while(outerScan.scanNext(outerRID) == OK) {
 		status = outerScan.getRecord(outerRec);
-        	ASSERT(status == OK);
+        ASSERT(status == OK);
 		// if here, match found
 		int outputOffset = 0;
 		for (int i = 0; i < projCnt; i++) {
 			// only one attr, unlike join.C
 			memcpy(outputData + outputOffset, (char *)outerRec.data + projNames[i].attrOffset, projNames[i].attrLen);
-            		outputOffset += projNames[i].attrLen;
+            outputOffset += projNames[i].attrLen;
 		}
 		// add the new record to the output relation
         RID outRID;
