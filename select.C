@@ -115,9 +115,9 @@ const Status ScanSelect(const string & result,
 		return status;
 	}
 	char outputData[reclen];
-    Record outputRec; // for output
-    outputRec.data = (void *) outputData;
-    outputRec.length = reclen;
+    	Record outputRec; // for output
+    	outputRec.data = (void *) outputData;
+    	outputRec.length = reclen;
 	// set up, scan outer
 	HeapFileScan outerScan(string(attrDesc->relName), status);
 	if (status != OK) {
@@ -132,13 +132,13 @@ const Status ScanSelect(const string & result,
 	// scanning outer table
 	while(outerScan.scanNext(outerRID) == OK) {
 		status = outerScan.getRecord(outerRec);
-        ASSERT(status == OK);
+        	ASSERT(status == OK);
 		// if here, match found
 		int outputOffset = 0;
 		for (int i = 0; i < projCnt; i++) {
 			// only one attr, unlike join.C
 			memcpy(outputData + outputOffset, (char *)outerRec.data + projNames[i].attrOffset, projNames[i].attrLen);
-            outputOffset += projNames[i].attrLen;
+            		outputOffset += projNames[i].attrLen;
 		}
 		// add the new record to the output relation
         RID outRID;
