@@ -58,9 +58,9 @@ const Status QU_Select(const string & result,
 	const char* filter;
 	if (attr == NULL) {
 		// unconditional scan
-		// copy over relnames and attrnames
-		strcpy(attrDesc.relName, projNames[0].relName);
-		strcpy(attrDesc.attrName, projNames[0].attrName);
+		// populate attrDesc using getInfo
+		status = attrCat->getInfo(string(projNames[0].relName), string(projNames[0].attrName), attrDesc);
+		if (status != OK) {return status;}
 		// set every int to 0 (default)
 		attrDesc.attrOffset = 0;
 		attrDesc.attrType = INTEGER; // has to be set to something
@@ -71,6 +71,9 @@ const Status QU_Select(const string & result,
 			return status;
 		}
 		return OK;
+		// if not default, check attrtype to pass in correct filter.
+		// class notes say to do this in scanselect (? could be wrong), but that doesn't make sense.
+		// filter must be passed in, so do it before calling scanselect
 	} else if (attr->attrType == INTEGER) {
 		status = attrCat->getInfo(string(attr->relName), string(attr->attrName), attrDesc);
 		if (status != OK) {return status;}
