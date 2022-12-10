@@ -34,7 +34,7 @@ const Status QU_Select(const string & result,
 	// need to consult catalog. that is to say, the global vars attrCat and relCat,
 	// to go from attrInfo to attrDesc, which scanselect needs.
 	AttrDesc attrDesc;
-	int reclen; // length of output tuple
+	int reclen = 0; // length of output tuple
 	// there are multiple descriptions needed for projections
 	AttrDesc* projDesc = new AttrDesc[projCnt];
 	// populate this array with proper descs using getInfo from AttrCatalog
