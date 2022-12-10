@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "destroy.C": "cpp"
+        "destroy.C": "cpp",
+        "delete.C": "cpp",
+        "catalog.C": "cpp",
+        "insert.C": "cpp"
     }
 }
