@@ -4,7 +4,12 @@
 
 /*
  * Inserts a record into the specified relation.
- *
+ * 
+ * Parameters:
+ *  relation Name of the relation
+ *  attrCnt  Number of attributes that will be inserted
+ *  attrList Array of attributes that will be inserted
+ * 
  * Returns:
  * 	OK on success
  * 	an error code otherwise
