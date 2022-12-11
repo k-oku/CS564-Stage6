@@ -29,8 +29,8 @@ const Status QU_Insert(const string &relation, const int attrCnt, const attrInfo
 
 	// Prepare record	
 	int entrySz = 0;
-	for (int i = 0; i <= attrCnt - 1; ++i) 
-		entrySz += attrList[i].attrLen;
+	for (int i = 0; i <= relAttrCnt - 1; ++i) 
+		entrySz += attrs[i].attrLen;
 
 	char entryData[entrySz];
 	Record entry;
@@ -38,20 +38,25 @@ const Status QU_Insert(const string &relation, const int attrCnt, const attrInfo
 	entry.length = entrySz;
 
 	// Copy attributes over
-	int mrk;
+	int tmpi = 0;
+	float tmpf = 0;
 	for (int i = 0; i <= relAttrCnt - 1; ++i) {
-		mrk = 0;
 		for (int j = 0; j <= attrCnt - 1; ++j) {
-			if (strcmp(attrs[i].attrName, attrList[j].attrName) == 0 && attrs[i].attrType == attrList[j].attrType && attrs[i].attrLen == attrList[j].attrLen) {
-				memcpy(entryData + attrs[i].attrOffset, attrList[j].attrValue, attrs[i].attrLen);
-				mrk = 1;
+			if (strcmp(attrs[i].attrName, attrList[j].attrName) == 0 && attrs[i].attrType == attrList[j].attrType) {
+				if (attrs[i].attrType == 0)
+					memcpy(entryData + attrs[i].attrOffset, (char *)attrList[j].attrValue, attrs[i].attrLen);
+				if (attrs[i].attrType == 1) {
+					tmpi = atoi((char *)attrList[j].attrValue);
+					memcpy(entryData + attrs[i].attrOffset, (char *)&tmpi, attrs[i].attrLen);
+				}
+				if (attrs[i].attrType == 2) {
+					tmpf = atof((char *)attrList[j].attrValue);	
+					memcpy(entryData + attrs[i].attrOffset, (char *)&tmpf, attrs[i].attrLen);
+				}
 				break;
 			}
 		}
-		if (!mrk)
-			return ATTRNOTFOUND;
 	}
-
 	// Insert
 	InsertFileScan rel(relation, status);
 	if (status != OK)
