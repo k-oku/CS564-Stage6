@@ -13,7 +13,14 @@ const Status ScanSelect(const string & result,
 
 /*
  * Selects records from the specified relation.
- *
+ * QU_Select only sets up the params for ScanSelect.
+ * 
+ * @param result: where results are stored
+ * @param projCnt: count of projs
+ * @param projNames: names of projs
+ * @param attr: attrInfo table
+ * @param op: operation (==, <=, etc) in Operator form
+ * @param attrValue: to be used in filter
  * Returns:
  * 	OK on success
  * 	an error code otherwise
@@ -97,7 +104,18 @@ const Status QU_Select(const string & result,
 
 }
 
-
+/*
+ * ScanSelect uses a HeapFileScan to select.
+ * 
+ * @param projCnt: count of proj
+ * @param projNames: names of proj
+ * @param attrDesc: attrDesc table provided by QU_Select, 
+ * made from attrInfo
+ * @param op: passed in from QU_Select
+ * @param filter: filter depending on datatype to select
+ * @param reclen: length of output record
+ * Returns: OK on success, error otherwise
+ */
 const Status ScanSelect(const string & result, 
 #include "stdio.h"
 #include "stdlib.h"
@@ -124,9 +142,9 @@ const Status ScanSelect(const string & result,
 		return status;
 	}
 	char outputData[reclen];
-    Record outputRec; // for output
-    outputRec.data = (void *) outputData;
-    outputRec.length = reclen;
+    	Record outputRec; // for output
+    	outputRec.data = (void *) outputData;
+    	outputRec.length = reclen;
 	// set up, scan outer
 	HeapFileScan outerScan(string(attrDesc->relName), status);
 	if (status != OK) {
@@ -141,7 +159,7 @@ const Status ScanSelect(const string & result,
 	// scanning outer table
 	while(outerScan.scanNext(outerRID) == OK) {
 		status = outerScan.getRecord(outerRec);
-        ASSERT(status == OK);
+        	ASSERT(status == OK);
 		// if here, match found
 		int outputOffset = 0;
 		for (int i = 0; i < projCnt; i++) {
